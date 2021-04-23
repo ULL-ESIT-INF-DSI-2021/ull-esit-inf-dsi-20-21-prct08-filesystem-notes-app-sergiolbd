@@ -1,5 +1,6 @@
 import * as fs from 'fs';
-import {note} from './types';
+import { write } from 'node:fs';
+import {colors, note} from './types';
 
 export class NoteInstance {
   private notes: note[];
@@ -34,14 +35,53 @@ export class NoteInstance {
   }
 
   addNotes(nota: note) {
-    console.log(this.notes.length)
-    this.notes.forEach((note) => {
-      if (note.title === nota.title) {
-        console.log('Note title taken!');
-      } else {
+    const textNote: string = `Author: ${nota.user}\nBody: ${nota.body}\n`;
+    const ruta: string = `./Notes/${nota.title}.txt`;
+    if (fs.existsSync(ruta)) {
+      console.log('Note title taken!');
+    } else {
+      console.log('El fichero no existe');
+      fs.writeFile(ruta, textNote, (err) => {
+        if (err) throw err;
         console.log('New note added!');
+      });
+    }
+  }
+
+  modify(title: string, modify: string, typemodify: string) {
+    const ruta: string = `./Notes/${title}.txt`;
+    const newruta: string = `./Notes/${modify}.txt`;
+    if (fs.existsSync(ruta)) {
+      switch (typemodify) {
+        case 'rename':
+          fs.rename(ruta, newruta, (err) => {
+            if (err) throw err;
+            console.log(`${title}.txt rename to ${modify}.txt`);
+          });
+          break;
+        case 'append':
+          fs.appendFile(ruta, modify, (err) => {
+            if (err) throw err;
+            console.log(`${modify} was append to ${ruta}`);
+          });
+          break;
+        default: console.log('Unknown type of modify');
+          break;
       }
-    });
-    NoteInstance.noteInstance.notes.push(nota);
+    } else {
+      console.log('You cannot modify a non-existent note');
+    }
+  }
+
+  remove(user: string, title: string) {
+    const ruta: string = `./Notes/${title}.txt`;
+    if (fs.existsSync(ruta)) {
+      fs.rm(ruta, (err) => {
+        if (err) throw err;
+        console.log(`Remove ${title}`);
+      });
+    } else {
+      console.log('You cannot remove a non-existent note');
+    }
   }
 }
