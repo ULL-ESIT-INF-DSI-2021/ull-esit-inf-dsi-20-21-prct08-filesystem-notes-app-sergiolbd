@@ -2,10 +2,8 @@ import * as yargs from 'yargs';
 import {colors, note} from './types';
 import {NoteInstance} from './note';
 
-const noteInstance1 = NoteInstance.getNoteInstance();
-// const newNote:note = {user: 'Sergio', title: 'Blue', body: 'usa', color: colors.Azul};
-// noteInstance1.addNotes(newNote);
 
+const noteInstance1 = NoteInstance.getNoteInstance();
 /**
  * Command add Note
  */
@@ -37,13 +35,7 @@ yargs.command({
   handler(argv) {
     if (typeof argv.user === 'string' && typeof argv.title === 'string' &&
         typeof argv.body === 'string' && typeof argv.color === 'string') {
-      let index = 0;
-      for (let i = 0; i < 4; i++) {
-        if (argv.color === colors[i]) {
-          index = i;
-        }
-      }
-      const newNote:note = {user: argv.user, title: argv.title, body: argv.body, color: colors.Azul};
+      const newNote:note = {user: argv.user, title: argv.title, body: argv.body, color: argv.color};
       noteInstance1.addNotes(newNote);
     }
   },
@@ -114,7 +106,7 @@ yargs.command({
 /**
  * Commnand List Note
  */
- yargs.command({
+yargs.command({
   command: 'list',
   describe: 'list note',
   builder: {
@@ -131,6 +123,30 @@ yargs.command({
   },
 });
 
+/**
+ * Commnand Read Note
+ */
+yargs.command({
+  command: 'read',
+  describe: 'read note',
+  builder: {
+    user: {
+      describe: 'User Note',
+      demandOption: true,
+      type: 'string',
+    },
+    title: {
+      describe: 'Note title',
+      demandOption: true,
+      type: 'string',
+    },
+  },
+  handler(argv) {
+    if (typeof argv.user === 'string' && typeof argv.title === 'string') {
+      noteInstance1.read(argv.user, argv.title);
+    }
+  },
+});
+
 yargs.parse();
-// yargs.argv;
 

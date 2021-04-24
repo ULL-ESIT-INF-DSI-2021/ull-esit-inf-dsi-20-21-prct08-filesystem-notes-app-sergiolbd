@@ -1,10 +1,11 @@
 import * as fs from 'fs';
 const chalk = require('chalk');
-import {colors, note} from './types';
+import {colors, note, JsonNote} from './types';
+
+const error = chalk.bold.red;
+const informative = chalk.bold.green;
 
 export class NoteInstance {
-  private notes: note[];
-
   /**
    * Atributo privado estático para almacenar la única instancia
    * que va a tener dicha clase
@@ -15,7 +16,6 @@ export class NoteInstance {
    * Constructor privado para que no se pueda invocar fuera de la clase
    */
   private constructor() {
-    this.notes = [];
   }
 
   /**
@@ -30,84 +30,105 @@ export class NoteInstance {
     return NoteInstance.noteInstance;
   }
 
-  getNotes() {
-    return NoteInstance.noteInstance.notes;
-  }
-
   addNotes(nota: note) {
-    const error = chalk.bold.red;
-    const textNote: string = `Author: ${nota.user}\nBody: ${nota.body}\n`;
-    const ruta: string = `./Notes/${nota.user}/${nota.title}.txt`;
+    const data = JSON.stringify(this.parseJsonNote(nota));
+    const ruta: string = `./Notes/${nota.user}/${nota.title}.json`;
     if (fs.existsSync(`./Notes/${nota.user}/`)) {
       if (fs.existsSync(ruta)) {
         console.log(error('Note title taken!'));
       } else {
-        console.log('El fichero no existe');
-        fs.writeFile(ruta, textNote, (err) => {
-          if (err) throw err;
-          console.log(`New note added in ${nota.user}!`);
-        });
+        fs.writeFileSync(ruta, data);
+        console.log(informative(`New note added in ${nota.user}!`));
       }
     } else {
-      fs.mkdir(`./Notes/${nota.user}/`, {recursive: true}, (err) => {
-        if (err) throw err;
-        fs.writeFile(ruta, textNote, (err) => {
-          if (err) throw err;
-          console.log('New note added!');
-        });
-      });
+      fs.mkdirSync(`./Notes/${nota.user}/`, {recursive: true});
+      fs.writeFileSync(ruta, data);
+      console.log(informative('New note added!'));
     }
   }
 
   modify(user:string, title: string, modify: string, typemodify: string) {
-    const ruta: string = `./Notes/${user}/${title}.txt`;
-    const newruta: string = `./Notes/${modify}.txt`;
+    const ruta: string = `./Notes/${user}/${title}.json`;
+    const newruta: string = `./Notes/${user}/${modify}.json`;
     if (fs.existsSync(ruta)) {
       switch (typemodify) {
         case 'rename':
-          fs.rename(ruta, newruta, (err) => {
-            if (err) throw err;
-            console.log(`${title}.txt rename to ${modify}.txt`);
-          });
+          fs.renameSync(ruta, newruta);
+          console.log(informative(`${title}.txt rename to ${modify}.txt`));
           break;
         case 'append':
-          fs.appendFile(ruta, modify, (err) => {
-            if (err) throw err;
-            console.log(`${modify} was append to ${ruta}`);
-          });
+          fs.appendFileSync(ruta, modify);
+          console.log(informative(`${modify} was append to ${ruta}`));
           break;
-        default: console.log('Unknown type of modify');
+        default: console.log(error('Unknown type of modify!'));
           break;
       }
     } else {
-      console.log('You cannot modify a non-existent note');
+      console.log(error('You cannot modify a non-existent note!'));
     }
   }
 
   remove(user: string, title: string) {
-    const ruta: string = `./Notes/${user}/${title}.txt`;
+    const ruta: string = `./Notes/${user}/${title}.json`;
     if (fs.existsSync(ruta)) {
-      fs.rm(ruta, (err) => {
-        if (err) throw err;
-        console.log(`Remove ${title}`);
-      });
+      fs.rmSync(ruta);
+      console.log(informative(`Remove ${title}`));
     } else {
-      console.log('You cannot remove a non-existent note');
+      console.log(error('You cannot remove a non-existent note!'));
     }
   }
 
   list(user: string) {
     const ruta: string = `./Notes/${user}/`;
     if (fs.existsSync(ruta)) {
-      fs.readdir(ruta, (err, archivos) => {
-        if (err) throw err;
-        console.log('Your Notes');
-        archivos.forEach((note) => {
-          console.log(note);
-        });
+      const titles = fs.readdirSync(ruta);
+      console.log('Your Notes');
+      titles.forEach((note) => {
+        const text = fs.readFileSync(ruta + note);
+        const titleBody = JSON.parse(text.toString());
+        this.colorsprint(titleBody.color, titleBody.title);
       });
     } else {
-      console.log('This user has no notes');
+      console.log('This user has no notes!');
     }
+  }
+
+  read(user: string, title: string) {
+    const ruta: string = `./Notes/${user}/${title}.json`;
+    if (fs.existsSync(ruta)) {
+      const text = fs.readFileSync(ruta);
+      const titleBody = JSON.parse(text.toString());
+      console.log(`${titleBody.title}`);
+      this.colorsprint(titleBody.color, titleBody.body);
+    } else {
+      console.log(error('Note not found!'));
+    }
+  }
+
+  parseJsonNote(newNote: note): JsonNote {
+    const object: JsonNote = {
+      user: newNote.user,
+      title: newNote.title,
+      body: newNote.body,
+      color: newNote.color,
+    };
+    return object;
+  }
+
+  colorsprint(color: string, title: string) {
+    let colorNote;
+    switch (color) {
+      case 'Red': colorNote = chalk.bold.red;
+        break;
+      case 'Yellow': colorNote = chalk.bold.yellow;
+        break;
+      case 'Green': colorNote = chalk.bold.green;
+        break;
+      case 'Blue': colorNote = chalk.bold.blue;
+        break;
+      default: colorNote = chalk.bold.orange;
+        break;
+    }
+    console.log(colorNote(title));
   }
 }
