@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { write } from 'node:fs';
+const chalk = require('chalk');
 import {colors, note} from './types';
 
 export class NoteInstance {
@@ -35,21 +35,32 @@ export class NoteInstance {
   }
 
   addNotes(nota: note) {
+    const error = chalk.bold.red;
     const textNote: string = `Author: ${nota.user}\nBody: ${nota.body}\n`;
-    const ruta: string = `./Notes/${nota.title}.txt`;
-    if (fs.existsSync(ruta)) {
-      console.log('Note title taken!');
+    const ruta: string = `./Notes/${nota.user}/${nota.title}.txt`;
+    if (fs.existsSync(`./Notes/${nota.user}/`)) {
+      if (fs.existsSync(ruta)) {
+        console.log(error('Note title taken!'));
+      } else {
+        console.log('El fichero no existe');
+        fs.writeFile(ruta, textNote, (err) => {
+          if (err) throw err;
+          console.log(`New note added in ${nota.user}!`);
+        });
+      }
     } else {
-      console.log('El fichero no existe');
-      fs.writeFile(ruta, textNote, (err) => {
+      fs.mkdir(`./Notes/${nota.user}/`, {recursive: true}, (err) => {
         if (err) throw err;
-        console.log('New note added!');
+        fs.writeFile(ruta, textNote, (err) => {
+          if (err) throw err;
+          console.log('New note added!');
+        });
       });
     }
   }
 
-  modify(title: string, modify: string, typemodify: string) {
-    const ruta: string = `./Notes/${title}.txt`;
+  modify(user:string, title: string, modify: string, typemodify: string) {
+    const ruta: string = `./Notes/${user}/${title}.txt`;
     const newruta: string = `./Notes/${modify}.txt`;
     if (fs.existsSync(ruta)) {
       switch (typemodify) {
@@ -74,7 +85,7 @@ export class NoteInstance {
   }
 
   remove(user: string, title: string) {
-    const ruta: string = `./Notes/${title}.txt`;
+    const ruta: string = `./Notes/${user}/${title}.txt`;
     if (fs.existsSync(ruta)) {
       fs.rm(ruta, (err) => {
         if (err) throw err;
@@ -82,6 +93,21 @@ export class NoteInstance {
       });
     } else {
       console.log('You cannot remove a non-existent note');
+    }
+  }
+
+  list(user: string) {
+    const ruta: string = `./Notes/${user}/`;
+    if (fs.existsSync(ruta)) {
+      fs.readdir(ruta, (err, archivos) => {
+        if (err) throw err;
+        console.log('Your Notes');
+        archivos.forEach((note) => {
+          console.log(note);
+        });
+      });
+    } else {
+      console.log('This user has no notes');
     }
   }
 }

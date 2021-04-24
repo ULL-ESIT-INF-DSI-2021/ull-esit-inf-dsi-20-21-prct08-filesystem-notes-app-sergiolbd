@@ -81,7 +81,7 @@ yargs.command({
   handler(argv) {
     if (typeof argv.user === 'string' && typeof argv.title === 'string' &&
         typeof argv.modify === 'string' && typeof argv.typemodify === 'string') {
-      noteInstance1.modify(argv.title, argv.modify, argv.typemodify);
+      noteInstance1.modify(argv.user, argv.title, argv.modify, argv.typemodify);
     }
   },
 });
@@ -89,7 +89,7 @@ yargs.command({
 /**
  * Commnand Modify Note
  */
- yargs.command({
+yargs.command({
   command: 'remove',
   describe: 'Remove note',
   builder: {
@@ -107,6 +107,26 @@ yargs.command({
   handler(argv) {
     if (typeof argv.user === 'string' && typeof argv.title === 'string') {
       noteInstance1.remove(argv.user, argv.title);
+    }
+  },
+});
+
+/**
+ * Commnand List Note
+ */
+ yargs.command({
+  command: 'list',
+  describe: 'list note',
+  builder: {
+    user: {
+      describe: 'User Note',
+      demandOption: true,
+      type: 'string',
+    },
+  },
+  handler(argv) {
+    if (typeof argv.user === 'string') {
+      noteInstance1.list(argv.user);
     }
   },
 });
