@@ -60,8 +60,8 @@ export class NoteInstance {
     } else {
       fs.mkdirSync(`./Notes/${nota.user}/`, {recursive: true});
       fs.writeFileSync(ruta, data);
-      test = 'New note added!';
-      console.log(informative('New note added!'));
+      test = `New note added in ${nota.user}!`;
+      console.log(informative(`New note added in ${nota.user}!`));
     }
     return test;
   }
@@ -76,12 +76,15 @@ export class NoteInstance {
   modify(user:string, title: string, newtitle: string) {
     const ruta: string = `./Notes/${user}/${title}.json`;
     const newruta: string = `./Notes/${user}/${newtitle}.json`;
+    let test = '';
     if (fs.existsSync(ruta)) {
       fs.renameSync(ruta, newruta);
       console.log(informative(`${title}.json rename to ${newtitle}.json`));
     } else {
+      test = 'You cannot modify a non-existent note!';
       console.log(error('You cannot modify a non-existent note!'));
     }
+    return test;
   }
 
   /**
@@ -91,12 +94,16 @@ export class NoteInstance {
    */
   remove(user: string, title: string) {
     const ruta: string = `./Notes/${user}/${title}.json`;
+    let test = '';
     if (fs.existsSync(ruta)) {
       fs.rmSync(ruta);
+      test = `Remove ${title}`;
       console.log(informative(`Remove ${title}`));
     } else {
+      test = 'You cannot remove a non-existent note!';
       console.log(error('You cannot remove a non-existent note!'));
     }
+    return test;
   }
 
   /**
