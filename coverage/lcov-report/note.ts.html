@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">67.09% </span>
+                <span class="strong">70.42% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>53/79</span>
+                <span class='fraction'>50/71</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">45.83% </span>
+                <span class="strong">47.62% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>11/24</span>
+                <span class='fraction'>10/21</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">67.09% </span>
+                <span class="strong">70.42% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>53/79</span>
+                <span class='fraction'>50/71</span>
             </div>
         
             
@@ -224,19 +224,7 @@
 <a name='L165'></a><a href='#L165'>165</a>
 <a name='L166'></a><a href='#L166'>166</a>
 <a name='L167'></a><a href='#L167'>167</a>
-<a name='L168'></a><a href='#L168'>168</a>
-<a name='L169'></a><a href='#L169'>169</a>
-<a name='L170'></a><a href='#L170'>170</a>
-<a name='L171'></a><a href='#L171'>171</a>
-<a name='L172'></a><a href='#L172'>172</a>
-<a name='L173'></a><a href='#L173'>173</a>
-<a name='L174'></a><a href='#L174'>174</a>
-<a name='L175'></a><a href='#L175'>175</a>
-<a name='L176'></a><a href='#L176'>176</a>
-<a name='L177'></a><a href='#L177'>177</a>
-<a name='L178'></a><a href='#L178'>178</a>
-<a name='L179'></a><a href='#L179'>179</a>
-<a name='L180'></a><a href='#L180'>180</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L168'></a><a href='#L168'>168</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -316,17 +304,7 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -391,7 +369,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -412,7 +389,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as fs from 'fs';
@@ -462,7 +438,7 @@ export class NoteInstance {
    * @returns {string} Cadenas a mostrar por pantalla se retornan para hacer test
    */
   addNotes(nota: note) {
-    const data = JSON.stringify(nota);
+    const data = JSON.stringify(nota, null, 2);
     const ruta: string = `./Notes/${nota.user}/${nota.title}.json`;
     let test: string = '';
     <span class="missing-if-branch" title="else path not taken" >E</span>if (fs.existsSync(`./Notes/${nota.user}/`)) {
@@ -490,22 +466,12 @@ export class NoteInstance {
    * @param {string} modify Modificación
    * @param {string} typemodify Tipo de modificación (Rename | append)
    */
-  modify(user:string, title: string, modify: string, typemodify: string) {
+  modify(user:string, title: string, newtitle: string) {
     const ruta: string = `./Notes/${user}/${title}.json`;
-    const newruta: string = `./Notes/${user}/${modify}.json`;
+    const newruta: string = `./Notes/${user}/${newtitle}.json`;
     <span class="missing-if-branch" title="else path not taken" >E</span>if (fs.existsSync(ruta)) {
-      switch (typemodify) {
-        case 'rename':
-          fs.renameSync(ruta, newruta);
-          console.log(informative(`${title}.txt rename to ${modify}.json`));
-          break;
-<span class="branch-1 cbranch-no" title="branch not covered" >        case 'append':</span>
-<span class="cstat-no" title="statement not covered" >          fs.appendFileSync(ruta, modify);</span>
-<span class="cstat-no" title="statement not covered" >          console.log(informative(`${modify} was append to ${ruta}`));</span>
-<span class="cstat-no" title="statement not covered" >          break;</span>
-<span class="branch-2 cbranch-no" title="branch not covered" >        default: <span class="cstat-no" title="statement not covered" >console.log(error('Unknown type of modify!'));</span></span>
-<span class="cstat-no" title="statement not covered" >          break;</span>
-      }
+      fs.renameSync(ruta, newruta);
+      console.log(informative(`${title}.json rename to ${newtitle}.json`));
     } else {
 <span class="cstat-no" title="statement not covered" >      console.log(error('You cannot modify a non-existent note!'));</span>
     }
@@ -578,20 +544,18 @@ export class NoteInstance {
    * @param {string} text Título
    */
   colorsprint(color: string, text: string) {
-    let colorNote;
     switch (color) {
-<span class="branch-0 cbranch-no" title="branch not covered" >      case 'Red': <span class="cstat-no" title="statement not covered" >colorNote = chalk.bold.red;</span></span>
+<span class="branch-0 cbranch-no" title="branch not covered" >      case 'red': <span class="cstat-no" title="statement not covered" >console.log(chalk.bold.red(text));</span></span>
 <span class="cstat-no" title="statement not covered" >        break;</span>
-<span class="branch-1 cbranch-no" title="branch not covered" >      case 'Yellow': <span class="cstat-no" title="statement not covered" >colorNote = chalk.bold.yellow;</span></span>
+<span class="branch-1 cbranch-no" title="branch not covered" >      case 'yellow': <span class="cstat-no" title="statement not covered" >console.log(chalk.bold.yellow(text));</span></span>
 <span class="cstat-no" title="statement not covered" >        break;</span>
-<span class="branch-2 cbranch-no" title="branch not covered" >      case 'Green': <span class="cstat-no" title="statement not covered" >colorNote = chalk.bold.green;</span></span>
+<span class="branch-2 cbranch-no" title="branch not covered" >      case 'green': <span class="cstat-no" title="statement not covered" >console.log(chalk.bold.green(text));</span></span>
 <span class="cstat-no" title="statement not covered" >        break;</span>
-      case 'Blue': colorNote = chalk.bold.blue;
+      case 'blue': console.log(chalk.bold.blue(text));
         break;
-<span class="branch-4 cbranch-no" title="branch not covered" >      default: <span class="cstat-no" title="statement not covered" >colorNote = chalk.bold.orange;</span></span>
+<span class="branch-4 cbranch-no" title="branch not covered" >      default: <span class="cstat-no" title="statement not covered" >console.log(chalk.bold.black(text));</span></span>
 <span class="cstat-no" title="statement not covered" >        break;</span>
     }
-    console.log(colorNote(text));
   }
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -601,7 +565,7 @@ export class NoteInstance {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Sun Apr 25 2021 00:07:31 GMT+0100 (hora de verano de Europa occidental)
+                at Sun Apr 25 2021 12:14:11 GMT+0100 (hora de verano de Europa occidental)
             </div>
         </div>
         <script src="prettify.js"></script>

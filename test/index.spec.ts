@@ -25,12 +25,12 @@ describe('Test', () => {
   });
 
   it('noteInstance1.add(note)', () => {
-    const test = noteInstance1.addNotes({user: 'sergio', title: 'Prueba', body: 'Check test', color: 'Blue'});
+    const test = noteInstance1.addNotes({user: 'sergio', title: 'Prueba', body: 'Check test', color: 'blue'});
     expect(fs.existsSync(`./Notes/sergio/Prueba.json`)).to.be.eq(true);
   });
 
   it('noteInstance1.modify(oldname, newname)', ()=> {
-    noteInstance1.modify('sergio', 'Prueba', 'X', 'rename');
+    noteInstance1.modify('sergio', 'Prueba', 'X');
     expect(fs.existsSync(`./Notes/sergio/X.json`) && !fs.existsSync(`./Notes/sergio/Prueba.json`)).to.be.eq(true);
   });
 

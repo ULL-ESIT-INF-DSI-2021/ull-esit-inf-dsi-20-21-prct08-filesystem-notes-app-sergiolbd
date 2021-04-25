@@ -45,7 +45,7 @@ export class NoteInstance {
    * @returns {string} Cadenas a mostrar por pantalla se retornan para hacer test
    */
   addNotes(nota: note) {
-    const data = JSON.stringify(nota);
+    const data = JSON.stringify(nota, null, 2);
     const ruta: string = `./Notes/${nota.user}/${nota.title}.json`;
     let test: string = '';
     if (fs.existsSync(`./Notes/${nota.user}/`)) {
@@ -73,22 +73,12 @@ export class NoteInstance {
    * @param {string} modify Modificación
    * @param {string} typemodify Tipo de modificación (Rename | append)
    */
-  modify(user:string, title: string, modify: string, typemodify: string) {
+  modify(user:string, title: string, newtitle: string) {
     const ruta: string = `./Notes/${user}/${title}.json`;
-    const newruta: string = `./Notes/${user}/${modify}.json`;
+    const newruta: string = `./Notes/${user}/${newtitle}.json`;
     if (fs.existsSync(ruta)) {
-      switch (typemodify) {
-        case 'rename':
-          fs.renameSync(ruta, newruta);
-          console.log(informative(`${title}.txt rename to ${modify}.json`));
-          break;
-        case 'append':
-          fs.appendFileSync(ruta, modify);
-          console.log(informative(`${modify} was append to ${ruta}`));
-          break;
-        default: console.log(error('Unknown type of modify!'));
-          break;
-      }
+      fs.renameSync(ruta, newruta);
+      console.log(informative(`${title}.json rename to ${newtitle}.json`));
     } else {
       console.log(error('You cannot modify a non-existent note!'));
     }
@@ -161,19 +151,17 @@ export class NoteInstance {
    * @param {string} text Título
    */
   colorsprint(color: string, text: string) {
-    let colorNote;
     switch (color) {
-      case 'Red': colorNote = chalk.bold.red;
+      case 'red': console.log(chalk.bold.red(text));
         break;
-      case 'Yellow': colorNote = chalk.bold.yellow;
+      case 'yellow': console.log(chalk.bold.yellow(text));
         break;
-      case 'Green': colorNote = chalk.bold.green;
+      case 'green': console.log(chalk.bold.green(text));
         break;
-      case 'Blue': colorNote = chalk.bold.blue;
+      case 'blue': console.log(chalk.bold.blue(text));
         break;
-      default: colorNote = chalk.bold.orange;
+      default: console.log(chalk.bold.black(text));
         break;
     }
-    console.log(colorNote(text));
   }
 }

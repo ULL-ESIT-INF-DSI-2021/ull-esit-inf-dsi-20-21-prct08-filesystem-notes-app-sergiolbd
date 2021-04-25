@@ -62,21 +62,16 @@ yargs.command({
       demandOption: true,
       type: 'string',
     },
-    modify: {
-      describe: 'Modify of note',
-      demandOption: true,
-      type: 'string',
-    },
-    typemodify: {
-      describe: 'Type of Modify',
+    newtitle: {
+      describe: 'newtitle of note',
       demandOption: true,
       type: 'string',
     },
   },
   handler(argv) {
     if (typeof argv.user === 'string' && typeof argv.title === 'string' &&
-        typeof argv.modify === 'string' && typeof argv.typemodify === 'string') {
-      noteInstance1.modify(argv.user, argv.title, argv.modify, argv.typemodify);
+        typeof argv.newtitle === 'string') {
+      noteInstance1.modify(argv.user, argv.title, argv.newtitle);
     }
   },
 });
