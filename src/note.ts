@@ -1,10 +1,16 @@
 import * as fs from 'fs';
 const chalk = require('chalk');
-import {colors, note, JsonNote} from './types';
+import {note} from './types';
 
+/**
+ * Constantes que usadas con chalk para dar color a mensajes de error e informativos
+ */
 const error = chalk.bold.red;
 const informative = chalk.bold.green;
 
+/**
+ * Clase NoteInstance
+ */
 export class NoteInstance {
   /**
    * Atributo privado estático para almacenar la única instancia
@@ -16,6 +22,9 @@ export class NoteInstance {
    * Constructor privado para que no se pueda invocar fuera de la clase
    */
   private constructor() {
+    if (fs.existsSync('./Note/')) {
+      fs.mkdirSync(`./Notes/`, {recursive: true});
+    }
   }
 
   /**
@@ -30,23 +39,40 @@ export class NoteInstance {
     return NoteInstance.noteInstance;
   }
 
+  /**
+   * Método encargado de añadir una nota a la base de datos de notas
+   * @param {note} nota Nota a añadir
+   * @returns {string} Cadenas a mostrar por pantalla se retornan para hacer test
+   */
   addNotes(nota: note) {
-    const data = JSON.stringify(this.parseJsonNote(nota));
+    const data = JSON.stringify(nota);
     const ruta: string = `./Notes/${nota.user}/${nota.title}.json`;
+    let test: string = '';
     if (fs.existsSync(`./Notes/${nota.user}/`)) {
       if (fs.existsSync(ruta)) {
+        test = 'Note title taken!';
         console.log(error('Note title taken!'));
       } else {
         fs.writeFileSync(ruta, data);
+        test = `New note added in ${nota.user}!`;
         console.log(informative(`New note added in ${nota.user}!`));
       }
     } else {
       fs.mkdirSync(`./Notes/${nota.user}/`, {recursive: true});
       fs.writeFileSync(ruta, data);
+      test = 'New note added!';
       console.log(informative('New note added!'));
     }
+    return test;
   }
 
+  /**
+   * Método encargado realizar una modificación en la base de datos
+   * @param {string} user Usuario
+   * @param {string} title Titulo de la nota
+   * @param {string} modify Modificación
+   * @param {string} typemodify Tipo de modificación (Rename | append)
+   */
   modify(user:string, title: string, modify: string, typemodify: string) {
     const ruta: string = `./Notes/${user}/${title}.json`;
     const newruta: string = `./Notes/${user}/${modify}.json`;
@@ -54,7 +80,7 @@ export class NoteInstance {
       switch (typemodify) {
         case 'rename':
           fs.renameSync(ruta, newruta);
-          console.log(informative(`${title}.txt rename to ${modify}.txt`));
+          console.log(informative(`${title}.txt rename to ${modify}.json`));
           break;
         case 'append':
           fs.appendFileSync(ruta, modify);
@@ -68,6 +94,11 @@ export class NoteInstance {
     }
   }
 
+  /**
+   * Método encargado eliminar una nota de un determinado usuario
+   * @param {string} user Usuario
+   * @param {string} title Título
+   */
   remove(user: string, title: string) {
     const ruta: string = `./Notes/${user}/${title}.json`;
     if (fs.existsSync(ruta)) {
@@ -78,44 +109,58 @@ export class NoteInstance {
     }
   }
 
+  /**
+   * Método encargado de listar los títulos de la notas de un determinado user
+   * @param {string} user Usuario
+   * @returns {string[]} Array que almacena datos mostrados por consola para hacer test
+   */
   list(user: string) {
     const ruta: string = `./Notes/${user}/`;
+    const test: string[] = [];
     if (fs.existsSync(ruta)) {
       const titles = fs.readdirSync(ruta);
       console.log('Your Notes');
       titles.forEach((note) => {
         const text = fs.readFileSync(ruta + note);
         const titleBody = JSON.parse(text.toString());
+        test.push(titleBody.title);
         this.colorsprint(titleBody.color, titleBody.title);
       });
     } else {
+      test.push('This user has no notes!');
       console.log('This user has no notes!');
     }
+    return test;
   }
 
+  /**
+   * Método encargado de leer el cuerpo de una determinada nota
+   * @param {string} user Usuario
+   * @param {string} title Título de la nota
+   * @returns {string[]} Array que almacena datos mostrados por consola para hacer test
+   */
   read(user: string, title: string) {
     const ruta: string = `./Notes/${user}/${title}.json`;
+    const test: string[] = [];
     if (fs.existsSync(ruta)) {
       const text = fs.readFileSync(ruta);
       const titleBody = JSON.parse(text.toString());
+      test.push(titleBody.title, titleBody.body);
       console.log(`${titleBody.title}`);
       this.colorsprint(titleBody.color, titleBody.body);
     } else {
+      test.push('Note not found!');
       console.log(error('Note not found!'));
     }
+    return test;
   }
 
-  parseJsonNote(newNote: note): JsonNote {
-    const object: JsonNote = {
-      user: newNote.user,
-      title: newNote.title,
-      body: newNote.body,
-      color: newNote.color,
-    };
-    return object;
-  }
-
-  colorsprint(color: string, title: string) {
+  /**
+   * Método usa chalk para determinar el color de la nota y mostrar por pantalla con el color
+   * @param {string} color Color
+   * @param {string} text Título
+   */
+  colorsprint(color: string, text: string) {
     let colorNote;
     switch (color) {
       case 'Red': colorNote = chalk.bold.red;
@@ -129,6 +174,6 @@ export class NoteInstance {
       default: colorNote = chalk.bold.orange;
         break;
     }
-    console.log(colorNote(title));
+    console.log(colorNote(text));
   }
 }

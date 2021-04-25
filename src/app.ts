@@ -1,8 +1,11 @@
 import * as yargs from 'yargs';
-import {colors, note} from './types';
+import {note} from './types';
 import {NoteInstance} from './note';
 
-
+/**
+ * Instanciamos un objeto de tipo NoteInstance para poder
+ * acceder a sus métodos con las opciones seleccionadas con yargs
+ */
 const noteInstance1 = NoteInstance.getNoteInstance();
 /**
  * Command add Note
