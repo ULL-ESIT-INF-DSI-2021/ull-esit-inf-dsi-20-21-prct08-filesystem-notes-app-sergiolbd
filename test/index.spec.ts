@@ -68,7 +68,7 @@ describe('Test', () => {
     expect(noteInstance1.remove('sergio', 'Hola')).to.be.eq('You cannot remove a non-existent note!');
   });
 
-  /**/
+  /** Check add a note in a not exist user*/
   it('noteInstance1.add(note) in Sofia', () => {
     const test = noteInstance1.addNotes({user: 'Sofia', title: 'PruebaSofia', body: 'Check test', color: 'blue'});
     expect(test).to.be.eq('New note added in Sofia!');
@@ -78,5 +78,10 @@ describe('Test', () => {
     noteInstance1.remove('Sofia', 'PruebaSofia');
     expect(fs.existsSync('./Notes/Pepe/PruebaSofia.json')).to.be.eq(false);
     fs.rmdirSync('./Notes/Sofia');
+  });
+
+  /** Check chalk */
+  it('noteInstance1.colorsPrint(red, texto)', () => {
+    expect(noteInstance1.colorsprint('red', 'texto')).to.be.eq('chalk.bold.red(texto)');
   });
 });

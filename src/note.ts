@@ -160,6 +160,7 @@ export class NoteInstance {
   colorsprint(color: string, text: string) {
     switch (color) {
       case 'red': console.log(chalk.bold.red(text));
+        return `chalk.bold.red(${text})`;
         break;
       case 'yellow': console.log(chalk.bold.yellow(text));
         break;
